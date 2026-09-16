@@ -1,5 +1,6 @@
 import type { MouseEventHandler } from "react";
 import { ExpandMark } from "./ExpandMark";
+import { imageUrl } from "../site/utils";
 import type { Photograph, Study } from "../portfolio/types";
 
 type PhotoButtonArgs = {
@@ -19,7 +20,7 @@ export function PhotoButton({ study, photo, hidden, onOpen }: PhotoButtonArgs) {
     >
       <span className="photo-window" style={{ visibility: hidden ? "hidden" : undefined }}>
         <img
-          src={`/images/${photo.image}`}
+          src={imageUrl(photo.image)}
           alt={photo.alt}
           loading={study.id === "touch" ? "eager" : "lazy"}
         />

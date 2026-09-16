@@ -1,6 +1,8 @@
 import { services } from "./consts";
 import { LinkArrow } from "../components/LinkArrow";
 import { LegalNotice } from "../legal/LegalNotice";
+import { siteUrl } from "../site/utils";
+import { pageSlugs } from "../site/consts";
 
 export function ClosingSection() {
   return (
@@ -50,7 +52,7 @@ export function ClosingSection() {
             <LinkArrow direction="up" />
             Back to the food
           </a>
-          <a className="continue" href="/contact">
+          <a className="continue" href={siteUrl(`${pageSlugs.contact}/`)}>
             Contact <LinkArrow />
           </a>
         </nav>

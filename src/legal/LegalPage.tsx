@@ -17,8 +17,8 @@ export function LegalPage() {
         <article className="legal-content">
           <h1>Legal</h1>
           <p className="legal-draft">
-            Preview draft. The operator and privacy details below are placeholders to be completed
-            before publication.
+            Preview draft. Operator and privacy information is incomplete; bracketed fields still
+            need to be supplied.
           </p>
           <section aria-labelledby="image-rights-title">
             <h2 id="image-rights-title">Image rights</h2>

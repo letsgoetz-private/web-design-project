@@ -11,6 +11,7 @@ import {
 import { isDrag, swipeDirection, trailingSpace, wrapIndex } from "./utils";
 import type { PointerGesture, SelectPhotograph } from "./types";
 import type { Photograph, Study } from "../portfolio/types";
+import { imageUrl } from "../site/utils";
 
 type useGalleryArgs = {
   study: Study;
@@ -72,7 +73,7 @@ export function useGallery({ study, index, onSelect, frameRef, disabled }: useGa
   useEffect(() => {
     for (const step of [-1, 1]) {
       const preload = new Image();
-      preload.src = `/images/${study.gallery[wrapIndex(index + step, study.gallery.length)].image}`;
+      preload.src = imageUrl(study.gallery[wrapIndex(index + step, study.gallery.length)].image);
     }
   }, [index, study]);
 
@@ -89,7 +90,7 @@ export function useGallery({ study, index, onSelect, frameRef, disabled }: useGa
       requestedIndex.current = next;
       const ticket = ++request.current;
       const preload = new Image();
-      preload.src = `/images/${study.gallery[next].image}`;
+      preload.src = imageUrl(study.gallery[next].image);
       try {
         await preload.decode();
       } catch {

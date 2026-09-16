@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Header } from "../components/Header";
 import { ContactMethods } from "./ContactMethods";
 import { LegalNotice } from "../legal/LegalNotice";
+import { imageUrl } from "../site/utils";
 
 export function ContactPage() {
   useEffect(() => {
@@ -20,7 +21,7 @@ export function ContactPage() {
             <div className="contact-intro">
               <figure className="contact-portrait">
                 <img
-                  src="/images/timo-portrait.webp"
+                  src={imageUrl("timo-portrait.webp")}
                   alt="Timo Müller in his black chef’s shirt, arms folded."
                   width="600"
                   height="600"

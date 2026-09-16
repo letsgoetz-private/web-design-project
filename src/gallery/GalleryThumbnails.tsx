@@ -1,5 +1,6 @@
 import type { MouseEventHandler } from "react";
 import type { Thumbnail } from "./types";
+import { imageUrl } from "../site/utils";
 
 type GalleryThumbnailsArgs = {
   thumbnails: Thumbnail[];
@@ -20,7 +21,7 @@ export function GalleryThumbnails({ thumbnails, disabled, onSelect }: GalleryThu
           aria-pressed={thumbnail.selected}
           onClick={onSelect}
         >
-          <img src={`/images/${thumbnail.image}`} alt="" draggable={false} />
+          <img src={imageUrl(thumbnail.image)} alt="" draggable={false} />
         </button>
       ))}
     </div>

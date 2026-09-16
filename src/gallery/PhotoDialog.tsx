@@ -4,6 +4,7 @@ import { StudyGallery } from "./StudyGallery";
 import { ThoughtReveal } from "./ThoughtReveal";
 import type { Study, PortfolioState } from "../portfolio/types";
 import type { SelectPhotograph } from "./types";
+import { imageUrl } from "../site/utils";
 
 type PhotoDialogArgs = {
   study: Study | undefined;
@@ -59,7 +60,7 @@ export function PhotoDialog({
               />
             ) : (
               <div ref={frameRef} className="detail-photo" data-gallery-photo>
-                <img src={`/images/${study.image}`} alt={study.alt} />
+                <img src={imageUrl(study.image)} alt={study.alt} />
               </div>
             )}
             <ThoughtReveal study={study} />

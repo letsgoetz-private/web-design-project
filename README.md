@@ -1,6 +1,6 @@
 # Web design project
 
-React, TypeScript and Vite. Local development only.
+React, TypeScript and Vite. Use Node.js 24 for local development and builds.
 
 ```sh
 npm install
@@ -8,6 +8,24 @@ npm run dev
 ```
 
 Open `http://127.0.0.1:5173/`. Contact is at `/contact`; legal information is at `/legal`.
+
+## Design rationale
+
+- **Sensory communication:** photography evokes taste, texture and temperature, inviting an emotional response.
+- **Progressive disclosure:** a question introduces the image; interaction completes the thought.
+- **Visual restraint:** minimal composition, clear hierarchy and generous space keep attention on the work.
+- **Considered motion:** measured transitions and subtle rhythmic cues lend the interactions a tactile quality.
+- **Continuity of exploration:** galleries preserve position and image selection, with clear paths between views.
+- **Personal voice:** character emerges through the work and the maker’s perspective, with a quiet invitation to connect.
+
+## GitHub Pages
+
+Preview address: `https://letsgoetz-private.github.io/web-design-project/`.
+Publishing is manual: **Actions → Deploy preview to GitHub Pages → Run workflow** on `master`.
+The workflow checks and builds the app before deployment; pushing alone does not publish it.
+
+`SITE_BASE_PATH` sets the hosting path and defaults to `/` locally. The build writes contact and
+legal entry pages so direct links and refreshes work on static hosting.
 
 ## Checks
 
@@ -33,6 +51,7 @@ need browser verification. See [the interaction requirements](docs/interaction-r
 - `src/navigation`: a React lifecycle hook, a browser event adapter, and pure section-travel calculations.
 - `src/contact`: the contact page, React-owned disclosure state, reducer and contact-method mapping.
 - `src/legal`: legal information and the shared footer notice.
+- `src/site`: page selection, route names and hosting-aware URLs.
 - `src/components`: shared named UI components.
 - `src/styles`: base, header, portfolio, gallery, contact, services, legal and motion styles.
 

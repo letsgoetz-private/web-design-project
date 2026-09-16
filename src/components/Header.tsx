@@ -1,4 +1,6 @@
 import { LinkArrow } from "./LinkArrow";
+import { siteUrl } from "../site/utils";
+import { pageSlugs } from "../site/consts";
 
 type HeaderArgs = { backToFood?: boolean };
 
@@ -6,7 +8,7 @@ export function Header({ backToFood = false }: HeaderArgs) {
   return (
     <header className="site-header">
       <div className="header-inner">
-        <a className="identity" href="/">
+        <a className="identity" href={siteUrl()}>
           <strong>Timo Müller</strong>
           <span className="identity-details">
             <span>Food styling</span>
@@ -18,7 +20,7 @@ export function Header({ backToFood = false }: HeaderArgs) {
         </a>
         <a
           className={`contact-link${backToFood ? " header-back-link" : ""}`}
-          href={backToFood ? "/" : "/contact"}
+          href={siteUrl(backToFood ? "" : `${pageSlugs.contact}/`)}
         >
           {backToFood ? (
             <>

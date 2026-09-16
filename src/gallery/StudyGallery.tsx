@@ -5,6 +5,7 @@ import { GalleryEdge } from "./GalleryEdge";
 import { GalleryThumbnails } from "./GalleryThumbnails";
 import { useGallery } from "./useGallery";
 import { buildThumbnails, photographCount } from "./utils";
+import { imageUrl } from "../site/utils";
 
 type StudyGalleryArgs = {
   study: Study;
@@ -45,12 +46,12 @@ export function StudyGallery({ study, index, onSelect, frameRef, disabled }: Stu
             onPointerUp={gallery.finishGesture}
             onPointerCancel={gallery.cancelGesture}
           >
-            <img src={`/images/${photo.image}`} alt={photo.alt} draggable={false} />
+            <img src={imageUrl(photo.image)} alt={photo.alt} draggable={false} />
             {gallery.previous && (
               <img
                 key={gallery.previous.image}
                 className="gallery-previous-photo"
-                src={`/images/${gallery.previous.image}`}
+                src={imageUrl(gallery.previous.image)}
                 alt=""
                 aria-hidden="true"
                 draggable={false}

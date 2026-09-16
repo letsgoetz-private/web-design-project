@@ -1,7 +1,7 @@
 # Legal handover
 
 `/legal` contains confirmed image permissions and placeholders for the operator and privacy details.
-It is a draft, not a completed legal notice. Changes are local; no deployment is configured here.
+It is a draft, not a completed legal notice. GitHub Pages is configured as a manually deployed preview.
 
 Before a public preview or production release:
 
@@ -18,8 +18,8 @@ It serves images locally and uses ordinary outbound links. Recheck the deployed 
 deciding whether consent controls are needed. GitHub Pages logs visitor IP addresses for security;
 a public preview is not exempt just because it is temporary.
 
-Hosting must also support the app's `/contact` and `/legal` routes and asset paths.
-GitHub Pages subpath and direct-navigation handling have not been configured or verified.
+The build supports a configurable hosting base path and generates `/contact/` and `/legal/`
+entry pages. Recheck the production hosting setup when the client takes over.
 
 References: [§5 DDG](https://www.gesetze-im-internet.de/ddg/DDG.pdf),
 [GDPR Article 13](https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng),
