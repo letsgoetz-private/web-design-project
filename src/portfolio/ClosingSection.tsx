@@ -1,5 +1,6 @@
 import { services } from "./consts";
 import { LinkArrow } from "../components/LinkArrow";
+import { LegalNotice } from "../legal/LegalNotice";
 
 export function ClosingSection() {
   return (
@@ -43,15 +44,18 @@ export function ClosingSection() {
           </div>
         </div>
       </div>
-      <nav className="section-navigation" aria-label="Kitchen navigation">
-        <a className="continue" href="#plate">
-          <LinkArrow direction="up" />
-          Back to the food
-        </a>
-        <a className="continue" href="/contact">
-          Contact <LinkArrow />
-        </a>
-      </nav>
+      <footer className="services-footer">
+        <nav className="section-navigation" aria-label="Kitchen navigation">
+          <a className="continue" href="#plate">
+            <LinkArrow direction="up" />
+            Back to the food
+          </a>
+          <a className="continue" href="/contact">
+            Contact <LinkArrow />
+          </a>
+        </nav>
+        <LegalNotice />
+      </footer>
     </section>
   );
 }

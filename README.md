@@ -7,7 +7,7 @@ npm install
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173/`. The contact page is at `/contact`.
+Open `http://127.0.0.1:5173/`. Contact is at `/contact`; legal information is at `/legal`.
 
 ## Checks
 
@@ -32,8 +32,9 @@ need browser verification. See [the interaction requirements](docs/interaction-r
   reusable geometry, swipe and index calculations are in `utils.ts`.
 - `src/navigation`: a React lifecycle hook, a browser event adapter, and pure section-travel calculations.
 - `src/contact`: the contact page, React-owned disclosure state, reducer and contact-method mapping.
+- `src/legal`: legal information and the shared footer notice.
 - `src/components`: shared named UI components.
-- `src/styles`: base, header, portfolio, gallery, contact, services and motion styles.
+- `src/styles`: base, header, portfolio, gallery, contact, services, legal and motion styles.
 
 React owns rendered state through `useState` and `useReducer`. Reducers, calculations, mappers and
 content are ordinary TypeScript with explicit inputs; they do not import React or read the DOM.
@@ -46,7 +47,15 @@ argument shape is named `functionNameArgs` (or `ComponentNameArgs`) immediately 
 Keep repeated UI content in data, keep transformations out of JSX, and use Oxfmt/Oxlint for consistency.
 
 Contact values remain placeholders in `src/contact/contact-details.ts`. On-demand loading is a
-basic scraping deterrent; client-side code is public. Photographs are local assets with source
-URLs recorded in `image-sources.json`; this repository grants no reuse rights to those assets.
+basic scraping deterrent; client-side code is public.
+
+## Rights and legal details
+
+Images © Timo Müller, included with permission for the website and public repository.
+Source URLs are in `image-sources.json`; see [image rights](ASSET_RIGHTS.md).
+Website attribution is recorded in [the credits](CREDITS.md).
+
+Operator and privacy details still contain placeholders.
+Complete [the legal handover](docs/legal-handover.md) before publishing.
 
 Changes stay local. Do not push to a remote without explicit instruction.

@@ -1,5 +1,10 @@
 {
   "source": "https://timo-foodstyling.lokhviatcheslav.chatgpt.site/",
+  "rights": {
+    "rightsholder": "Timo Müller",
+    "permission": "Use approved for this website and its public source repository.",
+    "notice": "ASSET_RIGHTS.md"
+  },
   "assets": [
     {
       "name": "timo-portrait.webp",

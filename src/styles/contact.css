@@ -1,9 +1,13 @@
-.contact-page {
+.contact-shell {
   min-height: calc(100svh - var(--header-height));
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+.contact-page {
   display: grid;
   align-items: center;
   padding-top: 26px;
-  padding-bottom: 80px;
+  padding-bottom: 24px;
 }
 .contact-layout {
   display: grid;
@@ -147,9 +151,8 @@
 @media (max-width: 760px) {
   .contact-page {
     display: block;
-    min-height: calc(100svh - var(--header-height));
     padding-top: 24px;
-    padding-bottom: 36px;
+    padding-bottom: 16px;
   }
   .contact-layout {
     grid-template-columns: minmax(0, 1fr);

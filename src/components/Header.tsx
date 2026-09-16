@@ -1,8 +1,8 @@
 import { LinkArrow } from "./LinkArrow";
 
-type HeaderArgs = { isContact?: boolean };
+type HeaderArgs = { backToFood?: boolean };
 
-export function Header({ isContact = false }: HeaderArgs) {
+export function Header({ backToFood = false }: HeaderArgs) {
   return (
     <header className="site-header">
       <div className="header-inner">
@@ -17,10 +17,10 @@ export function Header({ isContact = false }: HeaderArgs) {
           </span>
         </a>
         <a
-          className={`contact-link${isContact ? " header-back-link" : ""}`}
-          href={isContact ? "/" : "/contact"}
+          className={`contact-link${backToFood ? " header-back-link" : ""}`}
+          href={backToFood ? "/" : "/contact"}
         >
-          {isContact ? (
+          {backToFood ? (
             <>
               <LinkArrow direction="left" />
               <span>Back to the food</span>
