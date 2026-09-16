@@ -28,6 +28,11 @@ Preserve the approved content and visual treatment while changing the implementa
 - A touch swipe moves one section and waits for a new gesture.
 - The page does not travel behind an open photograph.
 
+`tests/hosting.test.tsx` exercises both root and repository-path hosting:
+
+- Direct contact and legal page visits retain a return path to the portfolio.
+- Gallery images use the hosting path and selected photographs remain visible on return.
+
 ## Browser checks after layout or motion changes
 
 Check a wide viewport, a short desktop viewport, both sides of the 760px breakpoint, and a narrow

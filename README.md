@@ -1,4 +1,4 @@
-# Web design project
+# Food styling portfolio
 
 React, TypeScript and Vite. Use Node.js 24 for local development and builds.
 
@@ -7,7 +7,7 @@ npm install
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173/`. Contact is at `/contact`; legal information is at `/legal`.
+Open `http://127.0.0.1:5173/`. Contact is at `/contact/`; legal information is at `/legal/`.
 
 ## Design rationale
 
@@ -20,7 +20,7 @@ Open `http://127.0.0.1:5173/`. Contact is at `/contact`; legal information is at
 
 ## GitHub Pages
 
-Preview address: `https://letsgoetz-private.github.io/web-design-project/`.
+Preview: [Food styling portfolio](https://letsgoetz-private.github.io/web-design-project/).
 Publishing is manual: **Actions → Deploy preview to GitHub Pages → Run workflow** on `master`.
 The workflow checks and builds the app before deployment; pushing alone does not publish it.
 
@@ -38,7 +38,8 @@ Use `npm run test:watch` while changing an interaction, and `npm run fmt` to for
 
 The tests cover gallery cycling, per-section image memory, swipe/click suppression, dismissal,
 interrupted animation, delayed image loading, contact disclosure and retry, reduced motion,
-and section travel without queued gestures. They assert visitor outcomes rather than helper
+section travel without queued gestures, and navigation and images under a hosting base path.
+They assert visitor outcomes rather than helper
 implementations. `tests/setup.ts` supplies the browser layout and animation APIs missing in jsdom.
 It does not simulate visual rendering; responsive layout, native dialog focus, and motion still
 need browser verification. See [the interaction requirements](docs/interaction-requirements.md).
@@ -74,7 +75,7 @@ Images © Timo Müller, included with permission for the website and public repo
 Source URLs are in `image-sources.json`; see [image rights](ASSET_RIGHTS.md).
 Website attribution is recorded in [the credits](CREDITS.md).
 
-Operator and privacy details still contain placeholders.
-Complete [the legal handover](docs/legal-handover.md) before publishing.
+The public preview still contains operator and privacy placeholders; its legal notice is incomplete.
+Pending details are listed in [the legal handover](docs/legal-handover.md).
 
 Changes stay local. Do not push to a remote without explicit instruction.
