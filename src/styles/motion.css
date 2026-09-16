@@ -1,0 +1,109 @@
+@media (prefers-reduced-motion: reduce) {
+  .site-header .contact-link .link-arrow {
+    animation: none;
+    transform: none;
+  }
+}
+@keyframes surface-in {
+  from {
+    background: transparent;
+  }
+  to {
+    background: #171916;
+  }
+}
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+@keyframes plus-heartbeat {
+  0%,
+  45%,
+  100% {
+    transform: scale(1.12);
+  }
+  12% {
+    transform: scale(1.26);
+  }
+  23% {
+    transform: scale(1.12);
+  }
+  32% {
+    transform: scale(1.21);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .expand-mark,
+  .photo-button:hover .expand-mark,
+  .photo-button:focus-visible .expand-mark,
+  a:hover .link-arrow,
+  a:focus-visible .link-arrow {
+    animation: none;
+    transform: scale(1.12);
+  }
+}
+@keyframes page-return {
+  0%,
+  12% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes contact-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contact-intro,
+  .contact-invitation {
+    animation: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .section-navigation .link-arrow,
+  .social-contact .link-arrow {
+    animation: none;
+    transform: none;
+  }
+}
+@keyframes gallery-crossfade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gallery-controls,
+  .gallery-chevron,
+  .close .link-arrow {
+    animation: none;
+  }
+}

@@ -1,0 +1,183 @@
+.services {
+  grid-template-columns: minmax(0, 1fr);
+  min-height: calc(100svh - var(--header-height));
+  border-top: 1px solid var(--line);
+  padding: 40px 0 100px;
+}
+.services-content {
+  align-self: center;
+}
+.services-section-title {
+  font-weight: 400;
+  margin: 0 0 28px;
+}
+.services-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8%;
+  align-items: start;
+}
+.services-origin {
+  max-width: 16ch;
+  font-size: clamp(36px, 4vw, 56px);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.service-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 44px;
+  font-size: 16px;
+  transition: color 280ms ease-out;
+}
+.service-link:hover,
+.service-link:focus-visible {
+  color: #d8deab;
+}
+.services-heading {
+  margin: 0 0 24px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.services-reason {
+  max-width: 38ch;
+  margin-top: 28px;
+}
+.services-reason p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.services-reason p + p {
+  margin-top: 16px;
+}
+.services-list {
+  margin: 0;
+}
+.services-list > div + div {
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+  padding-top: 24px;
+}
+.services-list dt {
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+.services-list dd {
+  max-width: 40ch;
+  margin: 12px 0 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.service-recipes {
+  margin-top: 24px;
+}
+@media (min-width: 620px) and (max-width: 1100px) {
+  .services-layout {
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 6%;
+  }
+  .services-heading {
+    margin-bottom: 16px;
+  }
+  .services-reason {
+    margin-top: 20px;
+  }
+  .services-reason p {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .services-list dt {
+    font-size: 21px;
+  }
+  .services-list dd {
+    font-size: 15px;
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+  .services-list > div + div {
+    margin-top: 16px;
+    padding-top: 16px;
+  }
+  .service-recipes {
+    margin-top: 12px;
+  }
+}
+@media (min-width: 761px) and (max-height: 800px) {
+  .services {
+    padding-top: 24px;
+    padding-bottom: 90px;
+  }
+}
+@media (max-width: 760px) {
+  .services {
+    min-height: min-content;
+    padding: 24px 0 16px;
+    grid-template-rows: minmax(min-content, 1fr) auto;
+    gap: 20px;
+  }
+  .services-content {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .services-origin {
+    font-size: clamp(30px, 6vw, 40px);
+  }
+  .services-reason {
+    margin-top: 20px;
+  }
+  .services-reason p {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .services-heading {
+    margin-bottom: 16px;
+  }
+  .services-list dt {
+    font-size: 21px;
+  }
+  .services-list dd {
+    font-size: 15px;
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+  .services-list > div + div {
+    margin-top: 16px;
+    padding-top: 16px;
+  }
+  .service-recipes {
+    margin-top: 12px;
+  }
+  .services .section-navigation {
+    grid-row: 2;
+    justify-content: flex-start;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+}
+@media (min-width: 620px) and (max-width: 760px) {
+  .services-intro {
+    border-left: 1px solid var(--line);
+    padding-left: 24px;
+  }
+}
+@media (max-width: 619px) {
+  .services-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .services-intro {
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+  }
+}
