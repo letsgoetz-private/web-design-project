@@ -24,6 +24,8 @@ export function usePhotoTransition({ activeId, dispatch }: usePhotoTransitionArg
     const surface = dialog.current;
     const image = enlarged.current;
     const source = origin.current;
+    // Keep the already-decoded page image underneath while the original loads.
+    image.style.backgroundImage = `url("${source.currentSrc || source.src}")`;
     pageScroll.current = window.scrollY;
     const start = source.getBoundingClientRect();
     surface.showModal();
@@ -63,6 +65,7 @@ export function usePhotoTransition({ activeId, dispatch }: usePhotoTransitionArg
       unlockScroll.current?.();
       unlockScroll.current = null;
       image.getAnimations().forEach((animation) => animation.cancel());
+      image.style.removeProperty("background-image");
       surface.close();
     };
   }, [activeId, dispatch]);
@@ -77,6 +80,7 @@ export function usePhotoTransition({ activeId, dispatch }: usePhotoTransitionArg
     const image = enlarged.current;
     const source = origin.current;
     const currentStyle = getComputedStyle(image);
+    const landingReady = source.decode().catch(() => undefined);
     const transform = currentStyle.transform;
     const filter = currentStyle.filter;
     image.getAnimations().forEach((animation) => animation.cancel());
@@ -84,7 +88,7 @@ export function usePhotoTransition({ activeId, dispatch }: usePhotoTransitionArg
     const end = source.getBoundingClientRect();
     flushSync(() => dispatch({ type: "close" }));
     try {
-      await image.animate(
+      const landing = image.animate(
         [
           { transform, filter },
           { transform: photographTransform(start, end), filter: getComputedStyle(source).filter },
@@ -94,7 +98,10 @@ export function usePhotoTransition({ activeId, dispatch }: usePhotoTransitionArg
           easing: EXPANSION_EASING,
           fill: "forwards",
         },
-      ).finished;
+      );
+      // Keep the settled gallery frame covering the page until its smaller
+      // replacement has decoded, including on a slow connection.
+      await Promise.all([landing.finished, landingReady]);
       // The page photo already holds the selection. Restore it in the same paint.
       flushSync(() => dispatch({ type: "closed" }));
     } catch {

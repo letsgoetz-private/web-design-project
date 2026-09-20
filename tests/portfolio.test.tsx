@@ -179,9 +179,9 @@ describe("interrupted exploration", () => {
     await mountPage();
     await openGallery();
     const pending: Array<() => void> = [];
-    vi.spyOn(HTMLImageElement.prototype, "decode").mockImplementation(
-      () => new Promise((resolve) => pending.push(resolve)),
-    );
+    vi.spyOn(HTMLImageElement.prototype, "decode")
+      .mockImplementationOnce(() => new Promise((resolve) => pending.push(resolve)))
+      .mockImplementationOnce(() => new Promise((resolve) => pending.push(resolve)));
     await click("Next colour photograph");
     await click("Next colour photograph");
     await act(async () => {
@@ -220,6 +220,27 @@ describe("interrupted exploration", () => {
     );
     await openGallery();
     expect(galleryPhoto()).toHaveAttribute("src", "/images/timo-03.jpg");
+  });
+
+  it("keeps the returned photograph covered until its page preview has decoded", async () => {
+    await mountPage();
+    await openGallery();
+    const source = document.querySelector<HTMLImageElement>("#colour .photo-window img")!;
+    let finishLanding!: () => void;
+    vi.spyOn(source, "decode").mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finishLanding = resolve;
+        }),
+    );
+    await closeGallery();
+    expect(document.querySelector("dialog")).toHaveAttribute("open");
+    expect(document.querySelector("#colour .photo-window")).toHaveStyle({ visibility: "hidden" });
+    await act(async () => finishLanding());
+    expect(document.querySelector("dialog")).not.toHaveAttribute("open");
+    expect(document.querySelector("#colour .photo-window")).not.toHaveStyle({
+      visibility: "hidden",
+    });
   });
 
   it("does not turn a vertical drag into an accidental photograph advance", async () => {

@@ -27,6 +27,8 @@ Preserve the approved content and visual treatment while changing the implementa
 - Keyboard navigation does not steal keys from focused controls.
 - A touch swipe moves one section and waits for a new gesture.
 - The page does not travel behind an open photograph.
+- Native section travel pauses heartbeat cues until arrival; Escape cancels it without jumping.
+- Arrival still releases the gesture lock when the browser delays or omits `scrollend`.
 
 `tests/hosting.test.tsx` exercises both root and repository-path hosting:
 

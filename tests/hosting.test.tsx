@@ -32,6 +32,10 @@ describe.each(["/", "/web-design-project/"])("visiting a site hosted at %s", (ba
   it("loads gallery photographs under the hosting path and remembers the chosen image", async () => {
     vi.stubEnv("BASE_URL", basePath);
     render(<SitePage pathname={basePath} />);
+    expect(document.querySelector("#colour .photo-window img")).toHaveAttribute(
+      "srcset",
+      expect.stringContaining(`${basePath}images/previews/timo-03-640.webp 640w`),
+    );
     expect(screen.getByRole("link", { name: "Let’s talk" })).toHaveAttribute(
       "href",
       `${basePath}contact/`,
@@ -44,6 +48,10 @@ describe.each(["/", "/web-design-project/"])("visiting a site hosted at %s", (ba
     expect(document.querySelector(".detail-photo > img")).toHaveAttribute(
       "src",
       `${basePath}images/timo-03.jpg`,
+    );
+    expect(document.querySelector(".gallery-thumbnails img")).toHaveAttribute(
+      "src",
+      `${basePath}images/previews/timo-03-160.webp`,
     );
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: "Next colour photograph" }));

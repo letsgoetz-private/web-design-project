@@ -5,6 +5,26 @@ import { useSectionScroll } from "../src/navigation/useSectionScroll";
 import { setReducedMotion } from "./setup";
 
 function mountSections(heights = [700, 700, 700]) {
+  // Model the browser's smooth-scroll boundary, not the app's interpolation.
+  // The app must wait for arrival even if that takes longer on another browser.
+  const instantScroll = window.scrollTo;
+  let middleTimer: ReturnType<typeof setTimeout>;
+  let endTimer: ReturnType<typeof setTimeout>;
+  vi.stubGlobal(
+    "scrollTo",
+    vi.fn((options: ScrollToOptions) => {
+      clearTimeout(middleTimer);
+      clearTimeout(endTimer);
+      if (options.behavior !== "smooth") return instantScroll(options);
+      const start = window.scrollY;
+      const finish = options.top ?? start;
+      middleTimer = setTimeout(() => instantScroll({ top: (start + finish) / 2 }), 250);
+      endTimer = setTimeout(() => {
+        instantScroll({ top: finish });
+        window.dispatchEvent(new Event("scrollend"));
+      }, 1000);
+    }),
+  );
   Object.defineProperty(window, "innerHeight", { configurable: true, value: 800 });
   Object.defineProperty(document.documentElement, "scrollHeight", {
     configurable: true,
@@ -53,6 +73,42 @@ async function settle(duration = 1100) {
 afterEach(cleanup);
 
 describe("section navigation", () => {
+  it("delegates one smooth journey to the browser and pauses cues until arrival", async () => {
+    mountSections();
+    wheel(60);
+    expect(window.scrollTo).toHaveBeenCalledWith({ top: 700, behavior: "smooth" });
+    expect(document.documentElement).toHaveClass("section-travelling");
+    await settle(500);
+    expect(document.documentElement).toHaveClass("section-travelling");
+    expect(window.scrollTo).toHaveBeenCalledTimes(1);
+    await settle(600);
+    expect(window.scrollY).toBe(700);
+    expect(document.documentElement).not.toHaveClass("section-travelling");
+  });
+
+  it("Escape stops travel at the current position and restores the cues", async () => {
+    mountSections();
+    wheel(60);
+    await settle(400);
+    const interruptedAt = window.scrollY;
+    fireEvent.keyDown(document.body, { key: "Escape" });
+    expect(document.documentElement).not.toHaveClass("section-travelling");
+    await settle();
+    expect(window.scrollY).toBe(interruptedAt);
+    expect(location.hash).toBe("");
+  });
+
+  it("releases the journey when the destination is reached without a scrollend event", async () => {
+    mountSections();
+    wheel(60);
+    await settle(300);
+    // A browser can reach the destination before it reports the end of a touch gesture.
+    Object.defineProperty(window, "scrollY", { configurable: true, value: 700 });
+    await settle(150);
+    expect(document.documentElement).not.toHaveClass("section-travelling");
+    expect(location.hash).toBe("#section-1");
+  });
+
   it("takes one section per gesture and drops input during travel instead of queuing it", async () => {
     mountSections();
     expect(wheel(60).defaultPrevented).toBe(true);

@@ -1,5 +1,11 @@
 {
   "source": "https://timo-foodstyling.lokhviatcheslav.chatgpt.site/",
+  "derivatives": {
+    "path": "public/images/previews/",
+    "source": "The corresponding original JPEG in public/images/",
+    "generator": "scripts/optimize-images.py",
+    "purpose": "Responsive page images and gallery thumbnails; same image permissions apply."
+  },
   "rights": {
     "rightsholder": "Timo Müller",
     "permission": "Use approved for this website and its public source repository.",

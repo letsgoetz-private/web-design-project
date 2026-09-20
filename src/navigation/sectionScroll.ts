@@ -1,11 +1,12 @@
-import { GESTURE_GAP, INTENT_DISTANCE, NAVIGATION_KEYS, TRAVEL_DURATION } from "./consts";
 import {
-  keyDirection,
-  neighbouringSection,
-  sectionTarget,
-  travelProgress,
-  wheelDistance,
-} from "./utils";
+  GESTURE_GAP,
+  INTENT_DISTANCE,
+  NAVIGATION_KEYS,
+  SECTION_TOLERANCE,
+  SETTLE_CHECK_INTERVAL,
+  TRAVEL_TIMEOUT,
+} from "./consts";
+import { keyDirection, neighbouringSection, sectionTarget, wheelDistance } from "./utils";
 import type { TouchGesture } from "./types";
 
 // One deliberate gesture, one section. Tall sections remain freely scrollable.
@@ -13,8 +14,24 @@ export function attachSectionScroll() {
   const sections = Array.from(document.querySelectorAll<HTMLElement>(".encounter"));
   if (!sections.length) return;
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let frame = 0;
+  let visibility: IntersectionObserver | null = null;
+  function observeSections() {
+    visibility?.disconnect();
+    if (typeof IntersectionObserver === "undefined") return;
+    visibility = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries)
+          entry.target.classList.toggle("section-visible", entry.intersectionRatio >= 0.01);
+      },
+      { threshold: 0.01, rootMargin: `-${headerHeight()}px 0px 0px` },
+    );
+    document.documentElement.classList.add("sections-observed");
+    sections.forEach((section) => visibility!.observe(section));
+  }
+  observeSections();
+  let settleTimer = 0;
   let moving = false;
+  let destination: { section: HTMLElement; target: number; updateHash: boolean } | null = null;
   let lastWheel = -Infinity;
   let wheelDirection = 0;
   let distance = 0;
@@ -22,28 +39,45 @@ export function attachSectionScroll() {
   let touch: TouchGesture | null = null;
 
   const blocked = () => Boolean(document.querySelector("dialog[open]"));
-  const headerHeight = () => document.querySelector("header")?.getBoundingClientRect().height ?? 0;
-  const targetY = (section: HTMLElement) =>
-    sectionTarget({
-      top: section.getBoundingClientRect().top,
-      scrollY: window.scrollY,
-      headerHeight: headerHeight(),
-      pageHeight: document.documentElement.scrollHeight,
-      viewportHeight: window.innerHeight,
-    });
-  const cancel = () => {
-    cancelAnimationFrame(frame);
+  function headerHeight() {
+    return document.querySelector("header")?.getBoundingClientRect().height ?? 0;
+  }
+  function clearTravel() {
+    window.clearTimeout(settleTimer);
     moving = false;
-  };
+    destination = null;
+    document.documentElement.classList.remove("section-travelling");
+  }
+  function cancel() {
+    if (moving) window.scrollTo({ top: window.scrollY, behavior: "instant" });
+    clearTravel();
+  }
+  function onResize() {
+    cancel();
+    observeSections();
+  }
+  function complete() {
+    const arrival = destination;
+    clearTravel();
+    if (arrival?.updateHash) history.replaceState(history.state, "", `#${arrival.section.id}`);
+  }
+  function onScrollEnd() {
+    if (!destination) return;
+    if (Math.abs(window.scrollY - destination.target) <= SECTION_TOLERANCE) complete();
+    else cancel();
+  }
 
   function travel(section: HTMLElement, updateHash = true) {
     cancel();
     const start = window.scrollY;
-    const finish = targetY(section);
-    const complete = () => {
-      moving = false;
-      if (updateHash) history.replaceState(history.state, "", `#${section.id}`);
-    };
+    const finish = sectionTarget({
+      top: section.getBoundingClientRect().top,
+      scrollY: start,
+      headerHeight: headerHeight(),
+      pageHeight: document.documentElement.scrollHeight,
+      viewportHeight: window.innerHeight,
+    });
+    destination = { section, target: finish, updateHash };
     if (reduced.matches || Math.abs(finish - start) < 1) {
       window.scrollTo({ top: finish, behavior: "instant" });
       complete();
@@ -51,31 +85,43 @@ export function attachSectionScroll() {
     }
     const began = performance.now();
     moving = true;
-    const tick = (now: number) => {
-      if (blocked()) {
-        cancel();
-        return;
-      }
-      const elapsed = now - began;
-      // Smooth acceleration and a long, quiet landing; no snap at either end.
-      const ease = travelProgress(elapsed, TRAVEL_DURATION);
-      window.scrollTo({ top: start + (finish - start) * ease, behavior: "instant" });
-      if (elapsed < TRAVEL_DURATION) frame = requestAnimationFrame(tick);
-      else complete();
+    document.documentElement.classList.add("section-travelling");
+    // The browser owns interpolation. JS only checks arrival for browsers that
+    // lack scrollend, or defer it until the visitor lifts their finger.
+    const checkArrival = () => {
+      if (!moving) return;
+      if (Math.abs(window.scrollY - finish) <= SECTION_TOLERANCE) complete();
+      else if (performance.now() - began >= TRAVEL_TIMEOUT) cancel();
+      else settleTimer = window.setTimeout(checkArrival, SETTLE_CHECK_INTERVAL);
     };
-    frame = requestAnimationFrame(tick);
+    window.scrollTo({ top: finish, behavior: "smooth" });
+    settleTimer = window.setTimeout(checkArrival, SETTLE_CHECK_INTERVAL);
   }
 
   function neighbour(direction: number): HTMLElement | null | undefined {
+    const scrollY = window.scrollY;
+    const viewportHeight = window.innerHeight;
+    const header = headerHeight();
+    const pageHeight = document.documentElement.scrollHeight;
     const index = neighbouringSection({
       sections: sections.map((section) => {
         const rect = section.getBoundingClientRect();
-        return { target: targetY(section), height: rect.height, bottom: rect.bottom };
+        return {
+          target: sectionTarget({
+            top: rect.top,
+            scrollY,
+            headerHeight: header,
+            pageHeight,
+            viewportHeight,
+          }),
+          height: rect.height,
+          bottom: rect.bottom,
+        };
       }),
       direction,
-      scrollY: window.scrollY,
-      viewportHeight: window.innerHeight,
-      headerHeight: headerHeight(),
+      scrollY,
+      viewportHeight,
+      headerHeight: header,
     });
     return index === null || index === undefined ? index : sections[index];
   }
@@ -203,11 +249,15 @@ export function attachSectionScroll() {
   window.addEventListener("touchcancel", endTouch);
   window.addEventListener("click", onClick);
   window.addEventListener("keydown", onKeyDown);
-  window.addEventListener("resize", cancel);
+  window.addEventListener("resize", onResize);
   window.addEventListener("hashchange", cancel);
+  window.addEventListener("scrollend", onScrollEnd);
   reduced.addEventListener("change", cancel);
   return () => {
     cancel();
+    visibility?.disconnect();
+    document.documentElement.classList.remove("sections-observed");
+    sections.forEach((section) => section.classList.remove("section-visible"));
     window.removeEventListener("wheel", onWheel);
     window.removeEventListener("touchstart", onTouchStart);
     window.removeEventListener("touchmove", onTouchMove);
@@ -215,8 +265,9 @@ export function attachSectionScroll() {
     window.removeEventListener("touchcancel", endTouch);
     window.removeEventListener("click", onClick);
     window.removeEventListener("keydown", onKeyDown);
-    window.removeEventListener("resize", cancel);
+    window.removeEventListener("resize", onResize);
     window.removeEventListener("hashchange", cancel);
+    window.removeEventListener("scrollend", onScrollEnd);
     reduced.removeEventListener("change", cancel);
   };
 }

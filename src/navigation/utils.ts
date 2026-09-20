@@ -19,11 +19,6 @@ export function sectionTarget({
   return Math.max(0, Math.min(top + scrollY - headerHeight, pageHeight - viewportHeight));
 }
 
-export function travelProgress(elapsed: number, duration: number): number {
-  const t = Math.min(1, Math.max(0, elapsed / duration));
-  return t * t * t * (t * (6 * t - 15) + 10);
-}
-
 type neighbouringSectionArgs = {
   sections: SectionGeometry[];
   direction: number;

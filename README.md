@@ -46,6 +46,11 @@ need browser verification. See [the interaction requirements](docs/interaction-r
 
 ## Code structure
 
+Section travel uses browser-native smooth scrolling; heartbeat cues pause during travel and in
+offscreen chapters. Page images use responsive WebP variants, thumbnails use 160px previews, and
+the gallery keeps the original photographs. Regenerate previews with
+`python scripts/optimize-images.py` (requires Pillow); generated files are checked in.
+
 - `src/portfolio`: page components, chapter/service content, the pure selection reducer and view models.
 - `src/gallery`: gallery components and React hooks for browser animations, image loading and gestures;
   reusable geometry, swipe and index calculations are in `utils.ts`.

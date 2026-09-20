@@ -107,3 +107,10 @@
     animation: none;
   }
 }
+/* Freeze the cues in place while the viewport travels; resume after arrival. */
+.section-travelling .expand-mark,
+.section-travelling .link-arrow,
+.sections-observed .encounter:not(.section-visible) :is(.expand-mark, .link-arrow),
+.page-content.obscured :is(.expand-mark, .link-arrow) {
+  animation-play-state: paused !important;
+}
