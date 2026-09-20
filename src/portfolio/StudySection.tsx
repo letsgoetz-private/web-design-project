@@ -5,7 +5,14 @@ import type { StudySectionModel } from "./types";
 
 type StudySectionArgs = StudySectionModel & { onOpen: MouseEventHandler<HTMLButtonElement> };
 
-export function StudySection({ study, photo, hidden, reverse, links, onOpen }: StudySectionArgs) {
+export const StudySection = ({
+  study,
+  photo,
+  hidden,
+  reverse,
+  links,
+  onOpen,
+}: StudySectionArgs) => {
   return (
     <section
       className={`encounter second chapter${reverse ? " reverse" : ""}`}
@@ -24,4 +31,4 @@ export function StudySection({ study, photo, hidden, reverse, links, onOpen }: S
       <SectionNavigation label={`Navigate from ${study.label.toLowerCase()}`} links={links} />
     </section>
   );
-}
+};

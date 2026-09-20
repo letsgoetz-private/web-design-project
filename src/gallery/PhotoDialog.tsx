@@ -1,4 +1,4 @@
-import type { RefObject, MouseEvent, SyntheticEvent } from "react";
+import { useCallback, type RefObject, type MouseEvent, type SyntheticEvent } from "react";
 import { LinkArrow } from "../components/LinkArrow";
 import { StudyGallery } from "./StudyGallery";
 import { ThoughtReveal } from "./ThoughtReveal";
@@ -15,7 +15,8 @@ type PhotoDialogArgs = {
   onSelect: SelectPhotograph;
   onClose: () => Promise<void>;
 };
-export function PhotoDialog({
+
+export const PhotoDialog = ({
   study,
   index,
   phase,
@@ -23,17 +24,23 @@ export function PhotoDialog({
   frameRef,
   onSelect,
   onClose,
-}: PhotoDialogArgs) {
-  function handleCancel(event: SyntheticEvent<HTMLDialogElement>) {
-    event.preventDefault();
-    void onClose();
-  }
-  function handleOutsideClick(event: MouseEvent<HTMLDialogElement>) {
-    if (
-      !(event.target as Element).closest("[data-gallery-photo],.gallery-edge,.gallery-thumbnails")
-    )
+}: PhotoDialogArgs) => {
+  const handleCancel = useCallback(
+    (event: SyntheticEvent<HTMLDialogElement>) => {
+      event.preventDefault();
       void onClose();
-  }
+    },
+    [onClose],
+  );
+  const handleOutsideClick = useCallback(
+    (event: MouseEvent<HTMLDialogElement>) => {
+      if (
+        !(event.target as Element).closest("[data-gallery-photo],.gallery-edge,.gallery-thumbnails")
+      )
+        void onClose();
+    },
+    [onClose],
+  );
   const hasGallery = Boolean(study?.gallery.length);
   return (
     <dialog
@@ -69,4 +76,4 @@ export function PhotoDialog({
       )}
     </dialog>
   );
-}
+};

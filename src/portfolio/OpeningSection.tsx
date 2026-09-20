@@ -5,7 +5,7 @@ import { opening } from "./consts";
 
 type OpeningSectionArgs = { hidden: boolean; onOpen: MouseEventHandler<HTMLButtonElement> };
 
-export function OpeningSection({ hidden, onOpen }: OpeningSectionArgs) {
+export const OpeningSection = ({ hidden, onOpen }: OpeningSectionArgs) => {
   return (
     <section className="encounter first" id="opening" aria-labelledby="touch-title">
       <div className="thought">
@@ -26,4 +26,4 @@ export function OpeningSection({ hidden, onOpen }: OpeningSectionArgs) {
       />
     </section>
   );
-}
+};

@@ -4,7 +4,7 @@ import { ContactMethods } from "./ContactMethods";
 import { LegalNotice } from "../legal/LegalNotice";
 import { imageUrl } from "../site/utils";
 
-export function ContactPage() {
+export const ContactPage = () => {
   useEffect(() => {
     document.title = "Let’s talk — Timo Müller";
   }, []);
@@ -53,4 +53,4 @@ export function ContactPage() {
       </div>
     </>
   );
-}
+};

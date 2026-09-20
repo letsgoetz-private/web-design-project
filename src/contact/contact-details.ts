@@ -6,6 +6,6 @@ import type { ContactDetails } from "./types";
 const phone: string | null = null;
 const email: string | null = null;
 
-export function getContactDetails(): ContactDetails {
+export const getContactDetails = (): ContactDetails => {
   return { phone, email };
-}
+};

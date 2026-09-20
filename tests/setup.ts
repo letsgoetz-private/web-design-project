@@ -6,9 +6,9 @@ import { afterEach, beforeEach, vi } from "vitest";
 let reducedMotion = false;
 const animations = new WeakMap<Element, Animation[]>();
 
-export function setReducedMotion(value: boolean) {
+export const setReducedMotion = (value: boolean) => {
   reducedMotion = value;
-}
+};
 
 beforeEach(() => {
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
@@ -21,8 +21,8 @@ beforeEach(() => {
     get matches() {
       return reducedMotion;
     },
-    addEventListener() {},
-    removeEventListener() {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
   }));
   vi.stubGlobal("scrollTo", (options: ScrollToOptions) => {
     Object.defineProperty(window, "scrollY", { configurable: true, value: options.top ?? 0 });
@@ -30,9 +30,9 @@ beforeEach(() => {
   vi.stubGlobal(
     "ResizeObserver",
     class {
-      observe() {}
-      unobserve() {}
-      disconnect() {}
+      observe = () => {};
+      unobserve = () => {};
+      disconnect = () => {};
     },
   );
   vi.stubGlobal(
@@ -50,33 +50,58 @@ beforeEach(() => {
   HTMLImageElement.prototype.decode = vi.fn().mockResolvedValue(undefined);
   Element.prototype.setPointerCapture = vi.fn();
   Element.prototype.releasePointerCapture = vi.fn();
-  Element.prototype.getAnimations = function () {
-    return animations.get(this) ?? [];
-  };
-  Element.prototype.animate = function (_frames, options) {
-    const duration = typeof options === "number" ? options : Number(options?.duration ?? 0);
-    let timer: ReturnType<typeof setTimeout>;
-    let reject: (error: Error) => void;
-    const finished = new Promise<Animation>((resolve, rejectPromise) => {
-      reject = rejectPromise;
-      timer = setTimeout(() => resolve(animation), duration);
-    });
-    const animation = {
-      finished,
-      cancel() {
-        clearTimeout(timer);
-        reject(new Error("Animation cancelled"));
-      },
-    } as Animation;
-    animations.set(this, [...(animations.get(this) ?? []), animation]);
-    return animation;
-  };
-  HTMLDialogElement.prototype.showModal = function () {
-    this.open = true;
-  };
-  HTMLDialogElement.prototype.close = function () {
-    this.open = false;
-  };
+  Object.defineProperty(Element.prototype, "getAnimations", {
+    configurable: true,
+    get() {
+      const element = this as Element;
+      return () => animations.get(element) ?? [];
+    },
+  });
+  Object.defineProperty(Element.prototype, "animate", {
+    configurable: true,
+    get() {
+      const element = this as Element;
+      return (
+        _frames: Keyframe[] | PropertyIndexedKeyframes | null,
+        options?: number | KeyframeAnimationOptions,
+      ): Animation => {
+        const duration = typeof options === "number" ? options : Number(options?.duration ?? 0);
+        let timer: ReturnType<typeof setTimeout>;
+        let reject: (error: Error) => void;
+        const finished = new Promise<Animation>((resolve, rejectPromise) => {
+          reject = rejectPromise;
+          timer = setTimeout(() => resolve(animation), duration);
+        });
+        const animation = {
+          finished,
+          cancel: () => {
+            clearTimeout(timer);
+            reject(new Error("Animation cancelled"));
+          },
+        } as Animation;
+        animations.set(element, [...(animations.get(element) ?? []), animation]);
+        return animation;
+      };
+    },
+  });
+  Object.defineProperty(HTMLDialogElement.prototype, "showModal", {
+    configurable: true,
+    get() {
+      const dialog = this as HTMLDialogElement;
+      return () => {
+        dialog.open = true;
+      };
+    },
+  });
+  Object.defineProperty(HTMLDialogElement.prototype, "close", {
+    configurable: true,
+    get() {
+      const dialog = this as HTMLDialogElement;
+      return () => {
+        dialog.open = false;
+      };
+    },
+  });
 });
 
 afterEach(() => {

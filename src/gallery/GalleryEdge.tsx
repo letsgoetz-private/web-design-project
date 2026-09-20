@@ -7,7 +7,7 @@ type GalleryEdgeArgs = {
   onClick: MouseEventHandler<HTMLButtonElement>;
 };
 
-export function GalleryEdge({ direction, category, disabled, onClick }: GalleryEdgeArgs) {
+export const GalleryEdge = ({ direction, category, disabled, onClick }: GalleryEdgeArgs) => {
   const label = direction === "previous" ? "Previous" : "Next";
   return (
     <button
@@ -25,4 +25,4 @@ export function GalleryEdge({ direction, category, disabled, onClick }: GalleryE
       </svg>
     </button>
   );
-}
+};

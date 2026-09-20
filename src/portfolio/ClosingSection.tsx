@@ -1,10 +1,27 @@
-import { services } from "./consts";
 import { LinkArrow } from "../components/LinkArrow";
 import { LegalNotice } from "../legal/LegalNotice";
 import { siteUrl } from "../site/utils";
 import { pageSlugs } from "../site/consts";
 
-export function ClosingSection() {
+const services = [
+  {
+    name: "Food styling",
+    description:
+      "I notice when food looks dry, when a garnish has no reason to be there, or when an important texture gets lost.",
+  },
+  {
+    name: "Culinary concepts",
+    description:
+      "I start with your product and customer. I’ll share my ideas and work with you to find the right direction.",
+  },
+  {
+    name: "Recipe development",
+    description:
+      "I develop recipes and techniques for your brief, drawing on years of professional cooking.",
+  },
+];
+
+export const ClosingSection = () => {
   return (
     <section className="encounter services" id="kitchen" aria-labelledby="services-title">
       <div className="services-content">
@@ -60,4 +77,4 @@ export function ClosingSection() {
       </footer>
     </section>
   );
-}
+};

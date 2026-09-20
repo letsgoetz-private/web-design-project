@@ -1,6 +1,6 @@
 import type { Study } from "../portfolio/types";
 type ThoughtRevealArgs = { study: Study };
-export function ThoughtReveal({ study }: ThoughtRevealArgs) {
+export const ThoughtReveal = ({ study }: ThoughtRevealArgs) => {
   if (!study.reveal)
     return (
       <h2 id="detail-title" className="sr-only">
@@ -16,4 +16,4 @@ export function ThoughtReveal({ study }: ThoughtRevealArgs) {
       <h2 id="detail-title">{study.reveal}</h2>
     </div>
   );
-}
+};

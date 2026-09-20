@@ -3,7 +3,7 @@ import { LinkArrow } from "../components/LinkArrow";
 import { useContactDetails } from "./useContactDetails";
 import { contactMethods } from "./utils";
 
-export function ContactMethods() {
+export const ContactMethods = () => {
   const { state, reveal } = useContactDetails();
   const loading = state.status === "loading";
   const methods = state.details ? contactMethods(state.details) : [];
@@ -48,4 +48,4 @@ export function ContactMethods() {
       </div>
     </div>
   );
-}
+};

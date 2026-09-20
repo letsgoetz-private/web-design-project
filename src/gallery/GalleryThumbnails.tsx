@@ -8,7 +8,7 @@ type GalleryThumbnailsArgs = {
   onSelect: MouseEventHandler<HTMLButtonElement>;
 };
 
-export function GalleryThumbnails({ thumbnails, disabled, onSelect }: GalleryThumbnailsArgs) {
+export const GalleryThumbnails = ({ thumbnails, disabled, onSelect }: GalleryThumbnailsArgs) => {
   return (
     <div className="gallery-thumbnails" aria-label="Choose a photograph">
       {thumbnails.map((thumbnail) => (
@@ -31,4 +31,4 @@ export function GalleryThumbnails({ thumbnails, disabled, onSelect }: GalleryThu
       ))}
     </div>
   );
-}
+};

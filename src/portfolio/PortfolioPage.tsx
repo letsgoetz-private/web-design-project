@@ -7,20 +7,51 @@ import { ClosingSection } from "./ClosingSection";
 import { OpeningSection } from "./OpeningSection";
 import { StudySection } from "./StudySection";
 import { buildStudySections, findStudy } from "./utils";
-import { initialPortfolioState, portfolioReducer } from "./reducer";
+import type { PortfolioAction, PortfolioState } from "./types";
 
-export function PortfolioPage() {
+const initialPortfolioState: PortfolioState = {
+  activeId: null,
+  phase: "closed",
+  selectedImages: {},
+};
+
+const portfolioReducer = (state: PortfolioState, action: PortfolioAction): PortfolioState => {
+  switch (action.type) {
+    case "open":
+      return state.phase === "closed"
+        ? { ...state, activeId: action.studyId, phase: "opening" }
+        : state;
+    case "expanded":
+      return state.phase === "opening" ? { ...state, phase: "open" } : state;
+    case "select":
+      if (state.phase !== "open" || state.activeId !== action.studyId) return state;
+      return {
+        ...state,
+        selectedImages: { ...state.selectedImages, [action.studyId]: action.index },
+      };
+    case "close":
+      return state.phase === "closed" ? state : { ...state, phase: "closing" };
+    case "closed":
+      return { ...state, activeId: null, phase: "closed" };
+  }
+};
+
+export const PortfolioPage = () => {
   const [state, dispatch] = useReducer(portfolioReducer, initialPortfolioState);
   const transition = usePhotoTransition({ activeId: state.activeId, dispatch });
+  const { open } = transition;
   useSectionScroll(state.phase !== "closed");
   const active = findStudy(state.activeId);
   const sections = buildStudySections(state);
 
-  function openPhotograph(event: MouseEvent<HTMLButtonElement>) {
-    const studyId = event.currentTarget.dataset.studyId;
-    if (!studyId || !findStudy(studyId)) return;
-    transition.open(studyId, event.currentTarget.querySelector("img"));
-  }
+  const openPhotograph = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      const studyId = event.currentTarget.dataset.studyId;
+      if (!studyId || !findStudy(studyId)) return;
+      open(studyId, event.currentTarget.querySelector("img"));
+    },
+    [open],
+  );
   const selectPhotograph = useCallback((studyId: string, index: number) => {
     dispatch({ type: "select", studyId, index });
   }, []);
@@ -53,4 +84,4 @@ export function PortfolioPage() {
       />
     </>
   );
-}
+};

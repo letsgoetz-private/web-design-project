@@ -1,6 +1,8 @@
-import type { ContactDetails, ContactMethod } from "./types";
+import type { ContactDetails } from "./types";
 
-export function contactMethods(details: ContactDetails): ContactMethod[] {
+type ContactMethod = { label: string; value: string; href: string | null };
+
+export const contactMethods = (details: ContactDetails): ContactMethod[] => {
   return [
     {
       label: "Phone",
@@ -13,4 +15,4 @@ export function contactMethods(details: ContactDetails): ContactMethod[] {
       href: details.email ? `mailto:${details.email}` : null,
     },
   ];
-}
+};

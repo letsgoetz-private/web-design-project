@@ -1,17 +1,20 @@
-import { useLayoutEffect, useRef, type Dispatch } from "react";
+import { useCallback, useLayoutEffect, useRef, type Dispatch } from "react";
 import { flushSync } from "react-dom";
-import { BRIGHTEN_DURATION, EXPANSION_DURATION, EXPANSION_EASING } from "./consts";
+
 import { photographTransform } from "./utils";
 import type { PortfolioAction } from "../portfolio/types";
 
-function motionDuration(duration: number): number {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : duration;
-}
+const EXPANSION_DURATION = 880;
+const EXPANSION_EASING = "cubic-bezier(.16,1,.3,1)";
+const BRIGHTEN_DURATION = 360;
+
+const motionDuration = (duration: number, reducedMotion: boolean): number =>
+  reducedMotion ? 0 : duration;
 
 type usePhotoTransitionArgs = { activeId: string | null; dispatch: Dispatch<PortfolioAction> };
 
 // Refs hold browser resources only. Visible phase and selection belong to the React reducer.
-export function usePhotoTransition({ activeId, dispatch }: usePhotoTransitionArgs) {
+export const usePhotoTransition = ({ activeId, dispatch }: usePhotoTransitionArgs) => {
   const dialog = useRef<HTMLDialogElement>(null);
   const enlarged = useRef<HTMLDivElement>(null);
   const origin = useRef<HTMLImageElement | null>(null);
@@ -21,6 +24,7 @@ export function usePhotoTransition({ activeId, dispatch }: usePhotoTransitionArg
 
   useLayoutEffect(() => {
     if (!activeId || !dialog.current || !enlarged.current || !origin.current) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const surface = dialog.current;
     const image = enlarged.current;
     const source = origin.current;
@@ -40,7 +44,11 @@ export function usePhotoTransition({ activeId, dispatch }: usePhotoTransitionArg
     let cancelled = false;
     const expansion = image.animate(
       [{ transform: photographTransform(end, start) }, { transform: "none" }],
-      { duration: motionDuration(EXPANSION_DURATION), easing: EXPANSION_EASING, fill: "both" },
+      {
+        duration: motionDuration(EXPANSION_DURATION, reducedMotion),
+        easing: EXPANSION_EASING,
+        fill: "both",
+      },
     );
     void expansion.finished
       .then(() => {
@@ -52,7 +60,7 @@ export function usePhotoTransition({ activeId, dispatch }: usePhotoTransitionArg
     const brightening = image.animate(
       [{ filter: getComputedStyle(source).filter }, { filter: "brightness(1)" }],
       {
-        duration: motionDuration(BRIGHTEN_DURATION),
+        duration: motionDuration(BRIGHTEN_DURATION, reducedMotion),
         easing: "ease-out",
         fill: "both",
       },
@@ -70,9 +78,10 @@ export function usePhotoTransition({ activeId, dispatch }: usePhotoTransitionArg
     };
   }, [activeId, dispatch]);
 
-  async function close() {
+  const close = useCallback(async () => {
     if (returning.current || !enlarged.current || !origin.current) return;
     returning.current = true;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     // Restore the scrollbar before measuring the landing, while the page is hidden.
     unlockScroll.current?.();
     unlockScroll.current = null;
@@ -94,7 +103,7 @@ export function usePhotoTransition({ activeId, dispatch }: usePhotoTransitionArg
           { transform: photographTransform(start, end), filter: getComputedStyle(source).filter },
         ],
         {
-          duration: motionDuration(EXPANSION_DURATION),
+          duration: motionDuration(EXPANSION_DURATION, reducedMotion),
           easing: EXPANSION_EASING,
           fill: "forwards",
         },
@@ -109,12 +118,15 @@ export function usePhotoTransition({ activeId, dispatch }: usePhotoTransitionArg
     } finally {
       returning.current = false;
     }
-  }
+  }, [dispatch]);
 
-  function open(studyId: string, source: HTMLImageElement | null) {
-    origin.current = source;
-    dispatch({ type: "open", studyId });
-  }
+  const open = useCallback(
+    (studyId: string, source: HTMLImageElement | null) => {
+      origin.current = source;
+      dispatch({ type: "open", studyId });
+    },
+    [dispatch],
+  );
 
   return { dialog, enlarged, open, close };
-}
+};

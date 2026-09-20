@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Header } from "../components/Header";
 import { imageCopyright } from "./consts";
 
-export function LegalPage() {
+export const LegalPage = () => {
   useEffect(() => {
     document.title = "Legal — Timo Müller";
   }, []);
@@ -64,4 +64,4 @@ export function LegalPage() {
       </main>
     </>
   );
-}
+};

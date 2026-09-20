@@ -61,13 +61,15 @@ the gallery keeps the original photographs. Regenerate previews with
 - `src/components`: shared named UI components.
 - `src/styles`: base, header, portfolio, gallery, contact, services, legal and motion styles.
 
-React owns rendered state through `useState` and `useReducer`. Reducers, calculations, mappers and
-content are ordinary TypeScript with explicit inputs; they do not import React or read the DOM.
-Hooks own imperative browser resources: animation handles, image requests, gesture tracking and
-observers. There is no external state store or RxJS. Event handlers only connect these pieces.
+React owns rendered state through `useState` and `useReducer`. Reducers, calculations and mappers
+are pure module-level arrow functions: explicit inputs, returned values, no DOM reads or mutation
+of caller-owned state. Hooks own browser resources, image requests, gestures and observers;
+side-effect handlers stay in their owning hook or component and use `useCallback`.
+There is no external state store or RxJS.
 
-Use direct imports, named components with matching filenames, nearby shared `types.ts` contracts,
-and module-level utilities and constants. Reuse an existing type when it fits. A function-specific
+Use arrow functions, direct imports and named components with matching filenames. Colocate
+single-consumer constants, types and reducers with their consumer; only shared declarations belong
+in shared modules. Reuse an existing type when it fits. A function-specific
 argument shape is named `functionNameArgs` (or `ComponentNameArgs`) immediately above that function.
 Keep repeated UI content in data, keep transformations out of JSX, and use Oxfmt/Oxlint for consistency.
 

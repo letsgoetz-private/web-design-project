@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { useSectionScroll } from "../src/navigation/useSectionScroll";
 import { setReducedMotion } from "./setup";
 
-function mountSections(heights = [700, 700, 700]) {
+const mountSections = (heights = [700, 700, 700]) => {
   // Model the browser's smooth-scroll boundary, not the app's interpolation.
   // The app must wait for arrival even if that takes longer on another browser.
   const instantScroll = window.scrollTo;
@@ -56,19 +56,19 @@ function mountSections(heights = [700, 700, 700]) {
     top += height;
   });
   renderHook(() => useSectionScroll(false));
-}
+};
 
-function wheel(deltaY: number) {
+const wheel = (deltaY: number) => {
   const event = new WheelEvent("wheel", { deltaY, bubbles: true, cancelable: true });
   window.dispatchEvent(event);
   return event;
-}
+};
 
-async function settle(duration = 1100) {
+const settle = async (duration = 1100) => {
   await act(async () => {
     await vi.advanceTimersByTimeAsync(duration);
   });
-}
+};
 
 afterEach(cleanup);
 

@@ -4,7 +4,7 @@ import { pageSlugs } from "../site/consts";
 
 type HeaderArgs = { backToFood?: boolean };
 
-export function Header({ backToFood = false }: HeaderArgs) {
+export const Header = ({ backToFood = false }: HeaderArgs) => {
   return (
     <header className="site-header">
       <div className="header-inner">
@@ -37,4 +37,4 @@ export function Header({ backToFood = false }: HeaderArgs) {
       </div>
     </header>
   );
-}
+};

@@ -10,7 +10,7 @@ type PhotoButtonArgs = {
   onOpen: MouseEventHandler<HTMLButtonElement>;
 };
 
-export function PhotoButton({ study, photo, hidden, onOpen }: PhotoButtonArgs) {
+export const PhotoButton = ({ study, photo, hidden, onOpen }: PhotoButtonArgs) => {
   return (
     <button
       className="photo-button"
@@ -34,4 +34,4 @@ export function PhotoButton({ study, photo, hidden, onOpen }: PhotoButtonArgs) {
       </span>
     </button>
   );
-}
+};

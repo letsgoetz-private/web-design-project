@@ -9,9 +9,11 @@ import {
   type PointerEvent,
 } from "react";
 import { isDrag, swipeDirection, trailingSpace, wrapIndex } from "./utils";
-import type { PointerGesture, SelectPhotograph } from "./types";
+import type { Point, SelectPhotograph } from "./types";
 import type { Photograph, Study } from "../portfolio/types";
 import { imageUrl } from "../site/utils";
+
+type PointerGesture = Point & { id: number };
 
 type useGalleryArgs = {
   study: Study;
@@ -21,7 +23,10 @@ type useGalleryArgs = {
   disabled: boolean;
 };
 
-export function useGallery({ study, index, onSelect, frameRef, disabled }: useGalleryArgs) {
+const updateSpace = (height: number, footerTop: number, footerHeight: number): string =>
+  `${trailingSpace(height, footerTop, footerHeight)}px`;
+
+export const useGallery = ({ study, index, onSelect, frameRef, disabled }: useGalleryArgs) => {
   const photo = study.gallery[index];
   const lastPhoto = useRef(photo);
   const [previous, setPrevious] = useState<Photograph | null>(null);
@@ -31,27 +36,31 @@ export function useGallery({ study, index, onSelect, frameRef, disabled }: useGa
   const gesture = useRef<PointerGesture | null>(null);
   const suppressClick = useRef(false);
 
+  const updateLayout = useCallback(() => {
+    const gallery = frameRef.current?.closest<HTMLElement>(".study-gallery");
+    const footer = gallery?.querySelector<HTMLElement>(".gallery-footer");
+    const layout = gallery?.parentElement;
+    if (!gallery || !footer || !layout) return;
+    // Layout offsets ignore the thumbnail entrance animation.
+    const space = updateSpace(gallery.clientHeight, footer.offsetTop, footer.offsetHeight);
+    layout.style.setProperty("--gallery-trailing-space", space);
+  }, [frameRef]);
+
   useLayoutEffect(() => {
     const gallery = frameRef.current?.closest<HTMLElement>(".study-gallery");
     const footer = gallery?.querySelector<HTMLElement>(".gallery-footer");
     const layout = gallery?.parentElement;
     if (!gallery || !footer || !layout) return;
 
-    const updateSpace = () => {
-      // Layout offsets ignore the thumbnail entrance animation. Moving the
-      // thought does not change these sizes or move the photograph.
-      const space = trailingSpace(gallery.clientHeight, footer.offsetTop, footer.offsetHeight);
-      layout.style.setProperty("--gallery-trailing-space", `${space}px`);
-    };
-    const observer = new ResizeObserver(updateSpace);
+    const observer = new ResizeObserver(updateLayout);
     observer.observe(gallery);
     observer.observe(footer);
-    updateSpace();
+    updateLayout();
     return () => {
       observer.disconnect();
       layout.style.removeProperty("--gallery-trailing-space");
     };
-  }, [frameRef]);
+  }, [frameRef, updateLayout]);
 
   useLayoutEffect(() => {
     disabledRef.current = disabled;
@@ -108,66 +117,79 @@ export function useGallery({ study, index, onSelect, frameRef, disabled }: useGa
     [select, study],
   );
 
-  useEffect(() => {
-    const dialog = frameRef.current?.closest("dialog");
-    const onKey = (event: KeyboardEvent) => {
+  const onKey = useCallback(
+    (event: KeyboardEvent) => {
       if (event.altKey || event.ctrlKey || event.metaKey || disabledRef.current) return;
       if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
         event.preventDefault();
         event.stopPropagation();
         move(event.key === "ArrowLeft" ? -1 : 1);
       }
-    };
+    },
+    [move],
+  );
+
+  useEffect(() => {
+    const dialog = frameRef.current?.closest("dialog");
     dialog?.addEventListener("keydown", onKey);
     return () => dialog?.removeEventListener("keydown", onKey);
-  }, [frameRef, move]);
+  }, [frameRef, onKey]);
 
-  function next() {
+  const next = useCallback(() => {
     move(1);
-  }
-  function previousImage() {
+  }, [move]);
+  const previousImage = useCallback(() => {
     move(-1);
-  }
-  function selectThumbnail(event: MouseEvent<HTMLButtonElement>) {
-    void select(Number(event.currentTarget.dataset.index));
-  }
-  function finishCrossfade() {
+  }, [move]);
+  const selectThumbnail = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      void select(Number(event.currentTarget.dataset.index));
+    },
+    [select],
+  );
+  const finishCrossfade = useCallback(() => {
     setPrevious(null);
-  }
-  function clickPhoto(event: MouseEvent<HTMLDivElement>) {
-    event.stopPropagation();
-    // A swipe can also produce a click; it must only advance once.
-    if (suppressClick.current && event.detail !== 0) {
-      suppressClick.current = false;
-      return;
-    }
-    move(1);
-  }
-  function startGesture(event: PointerEvent<HTMLDivElement>) {
+  }, []);
+  const clickPhoto = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      event.stopPropagation();
+      // A swipe can also produce a click; it must only advance once.
+      if (suppressClick.current && event.detail !== 0) {
+        suppressClick.current = false;
+        return;
+      }
+      move(1);
+    },
+    [move],
+  );
+  const startGesture = useCallback((event: PointerEvent<HTMLDivElement>) => {
     if (disabledRef.current || !event.isPrimary || event.button !== 0) return;
     suppressClick.current = false;
     gesture.current = { id: event.pointerId, x: event.clientX, y: event.clientY };
     event.currentTarget.setPointerCapture(event.pointerId);
-  }
-  function trackGesture(event: PointerEvent<HTMLDivElement>) {
+  }, []);
+  const trackGesture = useCallback((event: PointerEvent<HTMLDivElement>) => {
     const start = gesture.current;
     if (start?.id === event.pointerId && isDrag(start, { x: event.clientX, y: event.clientY }))
       suppressClick.current = true;
-  }
-  function finishGesture(event: PointerEvent<HTMLDivElement>) {
-    const start = gesture.current;
-    gesture.current = null;
-    if (!start || start.id !== event.pointerId || disabledRef.current) return;
-    const direction = swipeDirection(start, { x: event.clientX, y: event.clientY });
-    if (direction) {
-      suppressClick.current = true;
-      move(direction);
-    }
-  }
-  function cancelGesture() {
+  }, []);
+  const finishGesture = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      const start = gesture.current;
+      gesture.current = null;
+      if (!start || start.id !== event.pointerId || disabledRef.current) return;
+      const direction = swipeDirection(start, { x: event.clientX, y: event.clientY });
+      if (direction) {
+        suppressClick.current = true;
+        move(direction);
+      }
+    },
+    [move],
+  );
+  const cancelGesture = useCallback(() => {
     gesture.current = null;
     suppressClick.current = true;
-  }
+  }, []);
 
   return {
     previous,
@@ -181,4 +203,4 @@ export function useGallery({ study, index, onSelect, frameRef, disabled }: useGa
     finishGesture,
     cancelGesture,
   };
-}
+};

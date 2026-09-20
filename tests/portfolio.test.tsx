@@ -6,36 +6,36 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { setReducedMotion } from "./setup";
 
-async function mountPage(path = "/") {
+const mountPage = async (path = "/") => {
   window.history.replaceState(null, "", path);
   render(path === "/contact" ? <ContactPage /> : <PortfolioPage />);
-}
+};
 
-async function click(name: string) {
+const click = async (name: string) => {
   await act(async () => {
     fireEvent.click(screen.getByRole("button", { name }));
   });
-}
+};
 
-async function settle(duration = 900) {
+const settle = async (duration = 900) => {
   await act(async () => {
     await vi.advanceTimersByTimeAsync(duration);
   });
-}
+};
 
-async function openGallery(name = "anticipation") {
+const openGallery = async (name = "anticipation") => {
   await click(`Come closer: ${name}`);
   await settle();
-}
+};
 
-async function closeGallery() {
+const closeGallery = async () => {
   await click("Close photograph");
   await settle();
-}
+};
 
-function galleryPhoto() {
+const galleryPhoto = () => {
   return document.querySelector<HTMLImageElement>(".detail-photo > img")!;
-}
+};
 
 afterEach(cleanup);
 

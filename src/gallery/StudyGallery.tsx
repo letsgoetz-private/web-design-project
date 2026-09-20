@@ -15,7 +15,7 @@ type StudyGalleryArgs = {
   disabled: boolean;
 };
 
-export function StudyGallery({ study, index, onSelect, frameRef, disabled }: StudyGalleryArgs) {
+export const StudyGallery = ({ study, index, onSelect, frameRef, disabled }: StudyGalleryArgs) => {
   const gallery = useGallery({ study, index, onSelect, frameRef, disabled });
   const photo = study.gallery[index];
   const thumbnails = buildThumbnails(study, index);
@@ -85,4 +85,4 @@ export function StudyGallery({ study, index, onSelect, frameRef, disabled }: Stu
       </div>
     </section>
   );
-}
+};

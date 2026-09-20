@@ -3,7 +3,7 @@ import type { SectionLink } from "../portfolio/types";
 
 type SectionNavigationArgs = { label: string; links: SectionLink[] };
 
-export function SectionNavigation({ label, links }: SectionNavigationArgs) {
+export const SectionNavigation = ({ label, links }: SectionNavigationArgs) => {
   return (
     <nav className="section-navigation" aria-label={label}>
       {links.map((link) => (
@@ -24,4 +24,4 @@ export function SectionNavigation({ label, links }: SectionNavigationArgs) {
       ))}
     </nav>
   );
-}
+};
